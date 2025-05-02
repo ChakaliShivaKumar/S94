@@ -4,9 +4,9 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import Summary from './Summary';
 import Reports from './Reports';
-import Navbar from './Navbar';
+import Navbar from './NavBar';
 
-const PrivateRoute = ({ children }) => {
+const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   return token ? children : <Navigate to="/" />;
 };
@@ -17,18 +17,9 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route
-          path="/dashboard"
-          element={<PrivateRoute><Dashboard /></PrivateRoute>}
-        />
-        <Route
-          path="/summary"
-          element={<PrivateRoute><Summary /></PrivateRoute>}
-        />
-        <Route
-          path="/reports"
-          element={<PrivateRoute><Reports /></PrivateRoute>}
-        />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/summary" element={<ProtectedRoute><Summary /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       </Routes>
     </Router>
   );

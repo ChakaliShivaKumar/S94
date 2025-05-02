@@ -1,37 +1,28 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Navbar = () => {
+function Navbar() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const logout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
 
+  const isLoggedIn = !!localStorage.getItem('token');
+
   return (
-    <nav style={{ backgroundColor: '#222', padding: '10px', color: '#fff' }}>
-      <Link to="/dashboard" style={linkStyle}>Dashboard</Link>
-      <Link to="/summary" style={linkStyle}>Summary</Link>
-      <Link to="/reports" style={linkStyle}>Reports</Link>
-      <button onClick={handleLogout} style={buttonStyle}>Logout</button>
+    <nav style={{ padding: '10px', backgroundColor: '#f0f0f0' }}>
+      {isLoggedIn && (
+        <>
+          <Link to="/dashboard" style={{ marginRight: '10px' }}>Dashboard</Link>
+          <Link to="/summary" style={{ marginRight: '10px' }}>Summary</Link>
+          <Link to="/reports" style={{ marginRight: '10px' }}>Reports</Link>
+          <button onClick={logout}>Logout</button>
+        </>
+      )}
     </nav>
   );
-};
-
-const linkStyle = {
-  marginRight: '15px',
-  color: 'white',
-  textDecoration: 'none'
-};
-
-const buttonStyle = {
-  backgroundColor: '#ff4d4d',
-  color: 'white',
-  border: 'none',
-  padding: '5px 10px',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
+}
 
 export default Navbar;

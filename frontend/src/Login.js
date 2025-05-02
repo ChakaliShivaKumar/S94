@@ -1,67 +1,46 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './Login.css';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+function Login() {
+  const [username, setUsername] = useState('shiva');
+  const [password, setPassword] = useState('shiva');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  // Handle form submission
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) navigate('/dashboard');
+  }, [navigate]);
 
-    // Hardcoded credentials (username and password are 'shiva' for testing)
-    if (username === 'shiva' && password === 'shiva') {
-      try {
-        // Send a login request to the backend
-        const response = await axios.post('http://localhost:3000/login', {
-          username,
-          password
-        });
-
-        // Store the JWT token in localStorage for future use
-        localStorage.setItem('token', response.data.accessToken);
-
-        // Redirect to the dashboard
-        window.location.href = '/dashboard';
-      } catch (error) {
-        setErrorMessage('Invalid username or password');
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        navigate('/dashboard');
+      } else {
+        setError(data.err);
       }
-    } else {
-      setErrorMessage('Invalid username or password');
+    } catch (err) {
+      console.error(err);
+      setError('Something went wrong.');
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Login to Dashboard</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <form onSubmit={handleLogin}>
-        <div className="input-group">
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+    <div>
+      <h2>Login</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" /><br />
+      <input value={password} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" /><br />
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
-};
+}
 
 export default Login;

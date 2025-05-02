@@ -1,0 +1,141 @@
+$primary-color: #00c6ff;
+$secondary-color: #0072ff;
+$text-color: #e0f7ff;
+$background-dark: #001f3f;
+$box-shadow-light: rgba(0, 198, 255, 0.5);
+
+
+$font-stack: 'Segoe UI', Tahoma, Geneva, sans-serif;
+$font-size: 16px;
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-stack;
+  font-size: $font-size;
+  line-height: 1.6;
+  color: $text-color;
+  background-color: $background-dark;
+}
+
+
+nav {
+  background: linear-gradient(90deg, $primary-color, $secondary-color);
+  padding: 10px 20px;
+  box-shadow: 0px 4px 10px $box-shadow-light;
+
+  ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+
+    li {
+      a {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 1rem;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+}
+
+
+.hero {
+  background: linear-gradient(180deg, $secondary-color, $background-dark);
+  text-align: center;
+  padding: 60px 20px;
+  border-bottom: 2px solid $primary-color;
+
+  h1 {
+    font-size: 2.5rem;
+    color: lighten($primary-color, 20%);
+    text-shadow: 2px 2px 6px $secondary-color;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    color: lighten($secondary-color, 20%);
+  }
+}
+
+
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+
+article {
+  background: $background-dark;
+  border: 1px solid $secondary-color;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 198, 255, 0.3);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 198, 255, 0.6);
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: $primary-color;
+  }
+
+  p {
+    font-size: 1rem;
+    color: $text-color;
+    line-height: 1.5;
+  }
+}
+
+
+.chart-container {
+  width: 350px;
+  height: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+footer {
+  background: linear-gradient(90deg, $secondary-color, $primary-color);
+  color: $text-color;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 40px;
+  font-size: 0.9rem;
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+}

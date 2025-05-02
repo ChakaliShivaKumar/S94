@@ -1,61 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
 import axios from 'axios';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
-const Summary = () => {
-  const [chartData, setChartData] = useState(null);
+function Summary() {
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchSolarData = async () => {
-      try {
-        const res = await axios.get('/api/solar-data', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        const data = res.data;
-        setChartData({
-          labels: data.map(item => item.date),
-          datasets: [{
-            label: 'Solar Radiation (kWh/m²/day)',
-            data: data.map(item => item.radiation),
-            fill: false,
-            borderColor: '#4caf50'
-          }]
-        });
-      } catch (err) {
-        console.error('Error fetching chart data', err);
-      }
-    };
-
-    fetchSolarData();
+    axios.get('http://localhost:3000/api/summary-chart')
+      .then(res => setData(res.data))
+      .catch(err => console.error(err));
   }, []);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
-      <h2>Solar Radiation Trends (April 2024)</h2>
-      {chartData ? (
-        <Line data={chartData} />
-      ) : (
-        <p>Loading chart...</p>
-      )}
-      <p style={{ marginTop: '15px' }}>
-        This chart shows the average daily solar radiation for the city of Charlotte, NC, between April 1st and April 10th, 2024.
-        Data is sourced directly from the NASA POWER API, which provides publicly accessible global meteorological datasets.
-      </p>
-      <p>
-        🔗 Source:{" "}
-        <a
-          href="https://power.larc.nasa.gov"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          NASA POWER API
-        </a>
-      </p>
-    </div>
+    <main role="main" style={{ padding: '20px' }}>
+      <h1 id="ev-chart-heading">EV Adoption Trend (2025)</h1>
+      <section
+        aria-labelledby="ev-chart-heading"
+        aria-describedby="ev-chart-desc"
+        role="region"
+      >
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data}>
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 100]} />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="EV_Adoption" stroke="#006400" />
+          </LineChart>
+        </ResponsiveContainer>
+        <p id="ev-chart-desc">
+          The chart displays the percentage of EV adoption from January to May 2025.
+          Data is simulated based on market trends. For screen reader users, this line chart shows a steady rise,
+          with values starting from 40% in January and reaching 80% by May.
+          Source: <a href="https://www.sciencealert.com/toyotas-solid-state-battery-breakthrough-could-be-a-gamechanger" target="_blank" rel="noopener noreferrer">ScienceAlert</a>.
+        </p>
+      </section>
+    </main>
   );
-};
+}
 
 export default Summary;
