@@ -11,7 +11,7 @@ const FuelPrices = require('./FuelPrice');
 app.use(express.json());
 
 app.use(cors({
-  origin: 'https://s94-frontend.onrender.com',
+  origin: ['http://localhost:3000','https://s94-frontend.onrender.com'],
   credentials: true
 }));
 
@@ -72,7 +72,7 @@ app.post('/api/login', (req, res) => {
         // Set HttpOnly cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // false for local testing
+            secure: 'production', // false for local testing
             sameSite: 'Lax',
             maxAge: 3 * 60 * 1000
           }).json({
