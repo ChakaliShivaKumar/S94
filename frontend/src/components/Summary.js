@@ -1,100 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import './Summary.css';
-
-const API_URL = process.env.REACT_APP_API_URL || 'https://s94-backend.onrender.com';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
 function Summary() {
-  const [chartData, setChartData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-          setError('Authentication token not found');
-          setLoading(false);
-          return;
-        }
-        
-        const response = await axios.get(`${API_URL}/api/charts/industry-adoption`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.data.success) {
-          setChartData(response.data.data);
-        } else {
-          setError('Failed to fetch chart data');
-        }
-      } catch (err) {
-        setError('Error: ' + (err.response?.data?.message || err.message));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    axios.get('https://s94-backend.onrender.com/api/summary-chart')
+      .then(res => setData(res.data))
+      .catch(err => console.error(err));
   }, []);
 
   return (
-    <div className="summary-container">
-      <h1>Industry Adoption of Generative AI</h1>
-      
-      <div className="chart-container">
-        {loading && <p className="loading-message">Loading chart data...</p>}
-        
-        {error && <p className="error-message">Error: {error}</p>}
-        
-        {!loading && !error && (
-          <>
-            <div className="chart" aria-label="Bar chart showing industry adoption percentages of Generative AI">
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart
-                  data={chartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="industry" />
-                  <YAxis label={{ value: 'Adoption Rate (%)', angle: -90, position: 'insideLeft' }} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="adoption" name="Adoption Rate (%)" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="chart-explanation">
-              <h2>About This Chart</h2>
-              <p>
-                This chart illustrates the adoption rate of Generative AI technologies across 
-                different industries as of April 2025. The entertainment sector shows the highest 
-                adoption rate at 77%, leveraging generative models for content creation, 
-                personalization, and virtual experiences. The finance sector follows closely at 72%, 
-                utilizing AI for fraud detection, personalized financial advice, and risk assessment.
-              </p>
-              <p>
-                Healthcare has reached a 68% adoption rate, with applications in medical imaging, 
-                drug discovery, and personalized treatment plans. Education shows a moderate 63% 
-                adoption, using generative AI for personalized learning experiences and content 
-                creation. Retail has achieved 55% adoption, primarily in customer service, 
-                recommendation systems, and inventory management. Manufacturing currently has the 
-                lowest adoption rate at 48%, but is rapidly implementing generative AI for design 
-                optimization, predictive maintenance, and quality control.
-              </p>
-              <p>
-                Data source: Industry survey conducted by AI Research Institute, March-April 2025.
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+    <main role="main" style={{ padding: '20px' }}>
+      <h1 id="ev-chart-heading">EV Adoption Trend (2025)</h1>
+      <section
+        aria-labelledby="ev-chart-heading"
+        aria-describedby="ev-chart-desc"
+        role="region"
+      >
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data}>
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 100]} />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="EV_Adoption" stroke="#006400" />
+          </LineChart>
+        </ResponsiveContainer>
+        <p id="ev-chart-desc">
+          The chart displays the percentage of EV adoption from January to May 2025.
+          Data is simulated based on market trends. For screen reader users, this line chart shows a steady rise,
+          with values starting from 40% in January and reaching 80% by May.
+          Source: <a href="https://www.sciencealert.com/toyotas-solid-state-battery-breakthrough-could-be-a-gamechanger" target="_blank" rel="noopener noreferrer">ScienceAlert</a>.
+        </p>
+      </section>
+    </main>
   );
 }
 

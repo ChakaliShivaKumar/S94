@@ -165,6 +165,27 @@ const initializeDB = async () => {
   }
 };
 
+app.get('/api/summary-chart', (req, res) => {
+    res.json([
+        { name: 'Jan', EV_Adoption: 40 },
+        { name: 'Feb', EV_Adoption: 50 },
+        { name: 'Mar', EV_Adoption: 65 },
+        { name: 'Apr', EV_Adoption: 70 },
+        { name: 'May', EV_Adoption: 80 }
+    ]);
+});
+
+app.get('/api/report-chart', (req, res) => {
+    res.json([
+        { month: 'Jan', price: 3.5 },
+        { month: 'Feb', price: 3.7 },
+        { month: 'Mar', price: 3.9 },
+        { month: 'Apr', price: 4.1 },
+        { month: 'May', price: 4.3 }
+    ]);
+});
+
+
 // Simple health check route
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
