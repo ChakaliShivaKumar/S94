@@ -10,10 +10,11 @@ const myFuel = require('./FuelPrice');
 const FuelPrices = require('./FuelPrice');
 app.use(express.json());
 app.use(cors());
+require('dotenv').config();
 
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/CleanEnergy", { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect("mongodb+srv://schakali:schakali@cluster0.42xoegk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -22,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const PORT = 3000;
 
-const secretKey = 'My Secret Key';
+const secretKey = process.env.JWT_SECRET;
 const jwtMW = exjwt({
     secret: secretKey,
     algorithms: ['HS256']
@@ -32,13 +33,8 @@ let users = [
     {
         id: 1,
         username: 'Shiva',
-        password: '007'
-    },
-    {
-        id: 2,
-        username: 'Chakali',
-        password: '1234'
-    },
+        password: 'Shiva'
+    }
 ];
 
 app.post('/api/login', (req, res) => {
@@ -130,30 +126,6 @@ app.get("/fuel", async (req, res) => {
     }
 });
 
-
-// app.post("/fuel", async (req, res) => {
-//     try {
-//         const { myFuel } = req.body;
-
-//         if (!Array.isArray(myFuel)) {
-//             return res.status(400).json({ error: "Invalid format" });
-//         }
-
-//         const newFuelitems = myFuel.map(item => {
-//             if (!item.title || !item.budget || !item.color) {
-//                 throw new Error("All fields are required for each entry.");
-//             }
-//             return { title: item.title, value: item.budget, color: item.color };
-//         });
-
-//         // Insert multiple documents at once
-//         const insertedBudgets = await Budget.insertMany(newBudgets);
-//         res.status(201).json(insertedBudgets);
-//     } catch (err) {
-//         console.error("Error adding budget data:", err);
-//         res.status(400).json({ error: err.message });
-//     }
-// });
 
 app.get('/api/settings', jwtMW, (req, res) => {
     res.json({
