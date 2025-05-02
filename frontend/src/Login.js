@@ -10,7 +10,7 @@ function Login() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const res = await fetch('https://s94-backend.onrender.com/api/dashboard', {
+        const res = await fetch('https://s94-backend.onrender.com/api/check-auth', {
           method: 'GET',
           credentials: 'include'
         });
@@ -34,17 +34,17 @@ function Login() {
         body: JSON.stringify({ username, password })
       });
   
-      const data = await response.json();
-      if (data.success) {
-        navigate('/dashboard'); // No need to store token manually
+      if (response.ok) {
+        navigate('/dashboard');
       } else {
-        setError(data.err);
+        const data = await response.json();
+        setError(data.err || 'Login failed');
       }
     } catch (err) {
       console.error(err);
       setError('Something went wrong.');
     }
-  };
+  };  
   
 
   return (

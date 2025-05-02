@@ -41,10 +41,10 @@ function HomePage() {
     };
 
     axios
-      .get("http://localhost:3000/budget")
+      .get("https://s94-backend.onrender.com/fuel")
       .then((response) => {
-        if (response.data.myBudget.length > 0) {
-          response.data.myBudget.forEach((item) => {
+        if (response.data.FuelPrices.length > 0) {
+          response.data.FuelPrices.forEach((item) => {
             chartData.labels.push(item.title);
             chartData.datasets[0].data.push(item.budget);
             chartData.datasets[0].backgroundColor.push(item.colorCode);

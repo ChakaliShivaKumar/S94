@@ -5,26 +5,6 @@ function Dashboard() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-  };
-
-  useEffect(() => {
-    fetch('https://s94-backend.onrender.com/api/dashboard', {
-      method: 'GET',
-      credentials: 'include'
-    })
-      .then(res => {
-        if (res.status === 401) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then(data => setMessage(data.myContent))
-      .catch(() => {
-        navigate('/');
-      });
-  }, [navigate]);
-
   return (
     <div>
       <h2>Dashboard</h2>

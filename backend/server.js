@@ -20,7 +20,7 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-
+    
 
 mongoose
   .connect("mongodb+srv://schakali:schakali@cluster0.42xoegk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", { useNewUrlParser: true, useUnifiedTopology: true })
@@ -87,6 +87,14 @@ app.post('/api/login', (req, res) => {
         });
     }
 });
+
+app.get('/api/check-auth', (req, res) => {
+    if (req.session.user) {
+      res.json({ loggedIn: true });
+    } else {
+      res.status(401).json({ loggedIn: false });
+    }
+  });
 
 app.get('/api/dashboard', jwtMW, (req, res) => {
     res.json({
