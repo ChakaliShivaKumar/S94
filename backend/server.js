@@ -1,181 +1,177 @@
+// Main server file for S94 - Generative AI Innovations
 const express = require('express');
-const app = express();
-const cors = require("cors");
+const mongoose = require('mongoose');
+const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { expressjwt: exjwt } = require('express-jwt');
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const path = require('path');
-const myFuel = require('./FuelPrice');
-const FuelPrices = require('./FuelPrice');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'shiva-s94-secret-key'; // Use environment variable in production
+
+// Middleware
+
+// Configure CORS
+
+// Configure CORS for credentials
+const corsOptions = {
+  origin: 'http://localhost:3001', // Your frontend origin
+  credentials: true, // Required for cookies/sessions
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
-app.use(cors({
-  origin: ['http://localhost:3000','https://s94-frontend.onrender.com'],
-  credentials: true
-}));
+// Connect to MongoDB - Use environment variable for connection string when deploying to Render
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/s94db';
+mongoose.connect('mongodb+srv://schakali:schakali@cluster0.42xoegk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
-
-require('dotenv').config();
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-
-    
-
-mongoose
-  .connect("mongodb+srv://schakali:schakali@cluster0.42xoegk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-const PORT = 3000;
-
-const secretKey = process.env.JWT_SECRET;
-const jwtMW = exjwt({
-    secret: secretKey,
-    algorithms: ['HS256'],
-    getToken: req => req.cookies.token
+// Simple Chart Schema
+const ChartSchema = new mongoose.Schema({
+  chartType: String,
+  chartData: mongoose.Schema.Types.Mixed
 });
 
+const Chart = mongoose.model('Chart', ChartSchema);
 
-let users = [
-    {
-        id: 1,
-        username: 'Shiva',
-        password: 'Shiva'
-    }
-];
+// Auth middleware
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
 
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
-    console.log('Received username:', username);
-    console.log('Received password:', password);
-
-    // Find the user based on the username
-    const user = users.find(u => u.username === username);
-
-    if (!user) {
-        res.status(401).json({
-            success: false,
-            token: null,
-            err: 'Username or password is incorrect'
-        });
-        return;
-    }
-
-    if (password === user.password) {
-        let token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '3m' });
-    
-        // Set HttpOnly cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: true, // false for local testing
-            sameSite: 'Lax',
-            maxAge: 3 * 60 * 1000
-          }).json({
-            success: true,
-            err: null
-        });
-    } else {
-        res.status(401).json({
-            success: false,
-            token: null,
-            err: 'Username or password is incorrect'
-        });
-    }
-});
-
+// Add this with your other routes
 app.get('/api/check-auth', (req, res) => {
-    if (req.session.user) {
-      res.json({ loggedIn: true });
-    } else {
-      res.status(401).json({ loggedIn: false });
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.json({ loggedIn: false });
     }
-  });
-
-app.get('/api/dashboard', jwtMW, (req, res) => {
-    res.json({
-        success: true,
-        myContent: 'Secret content that only logged-in people can see'
-    });
-});
-
-app.post('/api/logout', (req, res) => {
-    res.clearCookie('token').json({ success: true });
-  });
-
-app.get('/api/prices', jwtMW, (req, res) => {
-    res.json({
-        success: true,
-        myContent: 'Secret content that only logged-in people can see'
-    });
-});
-
-app.get('/hello',(req,res) =>{
-    res.send("Hello World!");
-});
-
-app.get('/api/summary-chart', (req, res) => {
-    res.json([
-        { name: 'Jan', EV_Adoption: 40 },
-        { name: 'Feb', EV_Adoption: 50 },
-        { name: 'Mar', EV_Adoption: 65 },
-        { name: 'Apr', EV_Adoption: 70 },
-        { name: 'May', EV_Adoption: 80 }
-    ]);
-});
-
-app.get('/api/report-chart', (req, res) => {
-    res.json([
-        { month: 'Jan', price: 3.5 },
-        { month: 'Feb', price: 3.7 },
-        { month: 'Mar', price: 3.9 },
-        { month: 'Apr', price: 4.1 },
-        { month: 'May', price: 4.3 }
-    ]);
-});
-
-
-app.get("/fuel", async (req, res) => {
+  
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.json({ loggedIn: false });
+    }
+  
     try {
-        const { year, month } = req.query;
-
-        const query = {};
-        if (year) query.year = new Date(year); // Expects full ISO or YYYY format
-        if (month) query.month = parseInt(month);
-
-        const fuelItems = await FuelPrices.find(query);
-        return res.status(200).json(fuelItems);
-    } catch (err) {
-        console.error("Error fetching fuel data:", err);
-        res.status(500).json({ error: "Server error" });
+      jwt.verify(token, JWT_SECRET);
+      res.json({ loggedIn: true });
+    } catch (error) {
+      res.json({ loggedIn: false });
     }
+  });
+
+
+// Routes
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  // Simple authentication - hardcoded for this project
+  if (username === 'Shiva' && password === 'Shiva') {
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '24h' });
+    res.json({ success: true, token });
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid credentials' });
+  }
 });
 
+// Get data for first chart (Growth in Generative AI Models)
+app.get('/api/charts/ai-models', authMiddleware, async (req, res) => {
+  try {
+    // For this project, we'll use hardcoded data
+    // In a real app, you would fetch this from the database
+    const data = [
+      { month: 'Nov 2024', models: 125 },
+      { month: 'Dec 2024', models: 142 },
+      { month: 'Jan 2025', models: 159 },
+      { month: 'Feb 2025', models: 178 },
+      { month: 'Mar 2025', models: 198 },
+      { month: 'Apr 2025', models: 210 }
+    ];
+    
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
-app.get('/api/settings', jwtMW, (req, res) => {
-    res.json({
-        success: true,
-        myContent: 'Settings: Change your preferences here.'
+// Get data for second chart (Industry Adoption of Generative AI)
+app.get('/api/charts/industry-adoption', authMiddleware, async (req, res) => {
+  try {
+    // Hardcoded data
+    const data = [
+      { industry: 'Healthcare', adoption: 68 },
+      { industry: 'Finance', adoption: 72 },
+      { industry: 'Retail', adoption: 55 },
+      { industry: 'Manufacturing', adoption: 48 },
+      { industry: 'Education', adoption: 63 },
+      { industry: 'Entertainment', adoption: 77 }
+    ];
+    
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Initialize DB with dummy data if needed
+const initializeDB = async () => {
+  const chartCount = await Chart.countDocuments();
+  if (chartCount === 0) {
+    await Chart.create({
+      chartType: 'ai-models',
+      chartData: [
+        { month: 'Nov 2024', models: 125 },
+        { month: 'Dec 2024', models: 142 },
+        { month: 'Jan 2025', models: 159 },
+        { month: 'Feb 2025', models: 178 },
+        { month: 'Mar 2025', models: 198 },
+        { month: 'Apr 2025', models: 210 }
+      ]
     });
+    
+    await Chart.create({
+      chartType: 'industry-adoption',
+      chartData: [
+        { industry: 'Healthcare', adoption: 68 },
+        { industry: 'Finance', adoption: 72 },
+        { industry: 'Retail', adoption: 55 },
+        { industry: 'Manufacturing', adoption: 48 },
+        { industry: 'Education', adoption: 63 },
+        { industry: 'Entertainment', adoption: 77 }
+      ]
+    });
+    console.log('Database initialized with chart data');
+  }
+};
+
+// Simple health check route
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
-
-app.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {
-        res.status(401).json({
-            success: false,
-            officialError: err,
-            err: 'Username or password is incorrect'
-        });
-    } else {
-        next(err);
-    }
-});
-
-app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+// Start server
+app.listen(PORT, async () => {
+  console.log(`Server running on port ${PORT}`);
+  await initializeDB();
 });
