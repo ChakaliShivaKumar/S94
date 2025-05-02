@@ -9,10 +9,12 @@ const path = require('path');
 const myFuel = require('./FuelPrice');
 const FuelPrices = require('./FuelPrice');
 app.use(express.json());
+
 app.use(cors({
-    origin: 'http://localhost:3000', // explicitly allow your frontend origin
-    credentials: true                // allow cookies to be sent
-  }));
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
 
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
@@ -70,10 +72,10 @@ app.post('/api/login', (req, res) => {
         // Set HttpOnly cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,           // make sure your site uses HTTPS
-            sameSite: 'Strict',     // or 'Lax', depending on your use case
-            maxAge: 3 * 60 * 1000   // 3 minutes
-        }).json({
+            secure: process.env.NODE_ENV === 'production', // false for local testing
+            sameSite: 'Lax',
+            maxAge: 3 * 60 * 1000
+          }).json({
             success: true,
             err: null
         });

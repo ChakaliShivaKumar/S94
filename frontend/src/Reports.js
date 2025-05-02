@@ -8,9 +8,11 @@ function Reports() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('https://s94-backend.onrender.com/api/report-chart')
-      .then(res => setData(res.data))
-      .catch(err => console.error(err));
+    axios.get('https://s94-backend.onrender.com/api/report-chart', {
+      withCredentials: true
+    })
+    .then(res => setData(res.data))
+    .catch(err => console.error(err));
   }, []);
 
   return (

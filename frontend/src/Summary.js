@@ -8,7 +8,9 @@ function Summary() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('https://s94-backend.onrender.com/api/summary-chart')
+    axios.get('https://s94-backend.onrender.com/api/summary-chart', {
+        withCredentials: true
+      })
       .then(res => setData(res.data))
       .catch(err => console.error(err));
   }, []);

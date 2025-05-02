@@ -17,7 +17,8 @@ function Login() {
       const response = await fetch('https://s94-backend.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'
       });
       const data = await response.json();
       if (data.success) {
