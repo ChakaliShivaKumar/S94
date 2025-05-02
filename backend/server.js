@@ -11,6 +11,9 @@ const FuelPrices = require('./FuelPrice');
 app.use(express.json());
 app.use(cors());
 require('dotenv').config();
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 
 
 mongoose
@@ -26,8 +29,10 @@ const PORT = 3000;
 const secretKey = process.env.JWT_SECRET;
 const jwtMW = exjwt({
     secret: secretKey,
-    algorithms: ['HS256']
+    algorithms: ['HS256'],
+    getToken: req => req.cookies.token
 });
+
 
 let users = [
     {
@@ -57,10 +62,16 @@ app.post('/api/login', (req, res) => {
 
     if (password === user.password) {
         let token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '3m' });
-        res.json({
+    
+        // Set HttpOnly cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,           // make sure your site uses HTTPS
+            sameSite: 'Strict',     // or 'Lax', depending on your use case
+            maxAge: 3 * 60 * 1000   // 3 minutes
+        }).json({
             success: true,
-            err: null,
-            token
+            err: null
         });
     } else {
         res.status(401).json({

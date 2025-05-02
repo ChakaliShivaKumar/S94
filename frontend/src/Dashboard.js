@@ -17,9 +17,10 @@ function Dashboard() {
       return;
     }
 
-    fetch('http://localhost:3000/api/dashboard', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    fetch('https://s94-backend.onrender.com/api/dashboard', {
+        method: 'GET',
+        credentials: 'include'
+      })
     .then(res => {
       if (res.status === 401) throw new Error("Unauthorized");
       return res.json();

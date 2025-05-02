@@ -8,7 +8,7 @@ function Reports() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/report-chart')
+    axios.get('https://s94-backend.onrender.com/api/report-chart')
       .then(res => setData(res.data))
       .catch(err => console.error(err));
   }, []);
