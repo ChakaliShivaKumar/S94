@@ -22,7 +22,7 @@ function Dashboard() {
         </div>
         
         <div className="source-reference">
-          <p>Source: <a href="https://www.weforum.org/stories/2025/01/4-key-trends-to-watch-in-clean-energy-technology-in-2025/" target="_blank" rel="noopener noreferrer">Google AI Blog: Recent Advances in Generative AI</a></p>
+          <p>Source: <a href="https://www.weforum.org/stories/2025/01/4-key-trends-to-watch-in-clean-energy-technology-in-2025/" target="_blank" rel="noopener noreferrer">Recent innovations in Clean Energy </a></p>
         </div>
       </div>
       

@@ -7,7 +7,7 @@ function Navigation({ onLogout }) {
   
   return (
     <nav className="navigation" aria-label="Main Navigation">
-      <div className="nav-brand">S94 - Generative AI Innovations</div>
+      <div className="nav-brand">S94 - Recent innovations in Clean Energy</div>
       <ul className="nav-links">
         <li>
           <Link 
