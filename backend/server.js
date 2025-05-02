@@ -9,7 +9,11 @@ const path = require('path');
 const myFuel = require('./FuelPrice');
 const FuelPrices = require('./FuelPrice');
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // explicitly allow your frontend origin
+    credentials: true                // allow cookies to be sent
+  }));
+
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
