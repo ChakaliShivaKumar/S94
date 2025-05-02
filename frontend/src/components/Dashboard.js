@@ -4,38 +4,25 @@ import './Dashboard.css';
 function Dashboard() {
   return (
     <div className="dashboard-container">
-      <h1>Recent Innovations in Generative AI</h1>
+      <h1>Recent innovations in Clean Energy</h1>
       
       <div className="content-section">
         <h2>Subject Overview</h2>
         <div className="summary-text">
-          <p>
-            The field of Generative AI has seen remarkable advancements in the past six months, 
-            transforming how we interact with technology across multiple domains. Multimodal 
-            models have emerged as a significant breakthrough, allowing AI systems to process and 
-            generate content across different formats—text, images, audio, and video—simultaneously. 
-            This has enabled more natural human-AI interactions and richer content creation capabilities.
-          </p>
-          <p>
-            Open-source models have democratized access to powerful AI tools, fostering innovation 
-            across industries and research institutions. These models have reduced barriers to entry, 
-            allowing smaller organizations and independent developers to leverage cutting-edge AI 
-            capabilities. At the same time, we've witnessed substantial progress in making generative 
-            models more efficient and capable of running on consumer hardware, expanding their potential 
-            applications.
-          </p>
-          <p>
-            The healthcare sector has particularly benefited from generative AI innovations, with 
-            new tools that can assist in medical image analysis, drug discovery, and personalized 
-            treatment planning. Similarly, creative industries have embraced AI-powered tools for 
-            content creation, from music composition to visual art generation. Looking ahead, 
-            the integration of generative AI with robotics and edge computing presents promising 
-            opportunities for further advancement in this rapidly evolving field.
-          </p>
+        <p>
+          In 2025, clean energy innovation is advancing rapidly across four key areas. 
+          First, energy storage is becoming more efficient and cost-effective, enabling better integration of intermittent sources like solar and wind into the grid. This helps stabilize energy supply and reduces dependency on fossil fuels. 
+          Second, green hydrogen is emerging as a practical fuel alternative for carbon-intensive sectors such as shipping, aviation, and heavy industry. With scalable production methods improving, green hydrogen is becoming more commercially viable. 
+          Third, policy and international cooperation are accelerating clean energy deployment, with countries aligning strategies to meet climate targets and support sustainable infrastructure. 
+          Fourth, digital technologies such as artificial intelligence, the Internet of Things (IoT), and blockchain are playing a critical role in optimizing energy efficiency, monitoring emissions, and enabling smart grids. 
+          These advancements are not only reducing carbon footprints but also opening up new markets and investment opportunities. Collectively, these trends signify that clean energy is becoming central to global economic growth and environmental resilience.
+        </p>
+          
+          
         </div>
         
         <div className="source-reference">
-          <p>Source: <a href="https://ai.googleblog.com/2025/02/recent-advances-in-generative-ai.html" target="_blank" rel="noopener noreferrer">Google AI Blog: Recent Advances in Generative AI</a></p>
+          <p>Source: <a href="https://www.weforum.org/stories/2025/01/4-key-trends-to-watch-in-clean-energy-technology-in-2025/" target="_blank" rel="noopener noreferrer">Google AI Blog: Recent Advances in Generative AI</a></p>
         </div>
       </div>
       

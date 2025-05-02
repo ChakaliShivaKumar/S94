@@ -16,7 +16,7 @@ function Login() {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        
+
         const response = await fetch('https://s94-backend.onrender.com/api/check-auth', {
           method: 'GET',
           headers: {
@@ -70,9 +70,12 @@ function Login() {
 
       // Store the token in localStorage
       localStorage.setItem('token', data.token);
-      
+
       // Redirect to dashboard
       navigate('/dashboard');
+
+      // ✅ Reload to update app state (like Navbar visibility)
+      window.location.reload();
     } catch (err) {
       console.error('Login error:', err);
       setError(err.message || 'Invalid credentials');
@@ -80,7 +83,6 @@ function Login() {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="login-container">
@@ -91,7 +93,7 @@ function Login() {
             {error}
           </div>
         )}
-        
+
         <div className="form-group">
           <label htmlFor="username">Username</label>
           <input
@@ -116,8 +118,8 @@ function Login() {
           />
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
         >
           {loading ? 'Logging in...' : 'Login'}
