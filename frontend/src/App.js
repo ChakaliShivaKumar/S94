@@ -29,7 +29,6 @@ function App() {
   };
 
   return (
-    <Router>
       <div className="App">
         {authenticated && <Navigation onLogout={handleLogout} />}
         <Routes>
@@ -48,7 +47,6 @@ function App() {
           <Route path="/" element={<Navigate to={authenticated ? "/dashboard" : "/login"} />} />
         </Routes>
       </div>
-    </Router>
   );
 }
 
