@@ -14,7 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'shiva-s94-secret-key'; // Use envi
 
 // Configure CORS for credentials
 const corsOptions = {
-  origin: 'http://localhost:3001', // Your frontend origin
+  origin: ['http://localhost:3001','https://s94.onrender.com'], // Your frontend origin
   credentials: true, // Required for cookies/sessions
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
