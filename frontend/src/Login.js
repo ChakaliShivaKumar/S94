@@ -8,22 +8,35 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) navigate('/dashboard');
+    const checkLoginStatus = async () => {
+      try {
+        const res = await fetch('https://s94-backend.onrender.com/api/dashboard', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        if (res.ok) {
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        // Not logged in
+      }
+    };
+  
+    checkLoginStatus();
   }, [navigate]);
-
+  
   const handleLogin = async () => {
     try {
       const response = await fetch('https://s94-backend.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        credentials: 'include'
+        credentials: 'include',
+        body: JSON.stringify({ username, password })
       });
+  
       const data = await response.json();
       if (data.success) {
-        localStorage.setItem('token', data.token);
-        navigate('/dashboard');
+        navigate('/dashboard'); // No need to store token manually
       } else {
         setError(data.err);
       }
@@ -32,6 +45,7 @@ function Login() {
       setError('Something went wrong.');
     }
   };
+  
 
   return (
     <div>

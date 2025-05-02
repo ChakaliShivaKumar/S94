@@ -11,24 +11,18 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
     fetch('https://s94-backend.onrender.com/api/dashboard', {
-        method: 'GET',
-        credentials: 'include'
-      })
-    .then(res => {
-      if (res.status === 401) throw new Error("Unauthorized");
-      return res.json();
+      method: 'GET',
+      credentials: 'include'
     })
-    .then(data => setMessage(data.myContent))
-    .catch(() => {
-      logout();
-    });
+      .then(res => {
+        if (res.status === 401) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then(data => setMessage(data.myContent))
+      .catch(() => {
+        navigate('/');
+      });
   }, [navigate]);
 
   return (

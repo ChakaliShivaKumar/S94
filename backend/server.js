@@ -72,7 +72,7 @@ app.post('/api/login', (req, res) => {
         // Set HttpOnly cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: 'production', // false for local testing
+            secure: true, // false for local testing
             sameSite: 'Lax',
             maxAge: 3 * 60 * 1000
           }).json({
@@ -94,6 +94,10 @@ app.get('/api/dashboard', jwtMW, (req, res) => {
         myContent: 'Secret content that only logged-in people can see'
     });
 });
+
+app.post('/api/logout', (req, res) => {
+    res.clearCookie('token').json({ success: true });
+  });
 
 app.get('/api/prices', jwtMW, (req, res) => {
     res.json({
